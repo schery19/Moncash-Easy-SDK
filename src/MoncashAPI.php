@@ -82,8 +82,6 @@ class MoncashAPI {
 
 	 		$details = json_decode($res->getBody(), true);
 
-	 		$details['access_token'] = $token;
-
 	 		return new PaymentRequest($this->credentials, $details);
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
