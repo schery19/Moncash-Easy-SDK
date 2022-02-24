@@ -87,7 +87,7 @@ if(!isset($_GET['paid'])) {
 <strong>Notes :</strong>
 <ul>
 	<li>Vous utilisez la méthode btnPay() sur l'objet PaymentRequest en lui passant comme argument, des constantes comme, MoncashAPI::BTN_FR ou MoncashAPI::BTN_KR pour afficher le button respectivement en francais ou en créole, la valeur par défaut est MoncashAPI::BTN_EN qui affiche la version anglaise</li>
-	<li>Vous pouvez aussi récupérer les détails du paiement avec la méthode getDetailsByTransactionId sur l'objet PaymentRequest</li>
+	<li>Vous pouvez aussi récupérer les détails du paiement avec la méthode getDetailsByTransactionId sur l'objet MoncashAPI</li>
 	<li>Le paramètre 'paid' est spécifié dans l'url de redirection lors de la création du compte business, par exemple en mode développement on a spécifié : 'localhost:80/monProjet/pay.php?paid=1'</li>
 </ul>
 
