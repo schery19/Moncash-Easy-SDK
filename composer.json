@@ -14,8 +14,10 @@
             "email": "schneiderchery7@gmail.com"
         }
     ],
-    "require": {
-        "php": ">=7.3",
-        "guzzlehttp/guzzle": "3.8.1"
+   "require": {
+        "php": ">=5.3.3"
+    },
+    "require-dev" : {
+    	"guzzlehttp/guzzle": "3.8.1"
     }
 }
