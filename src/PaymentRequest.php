@@ -37,32 +37,7 @@ class PaymentRequest {
 		return $this->redirect = $this->credentials->getConfigs()['redirect_url']."".Constants::GATEWAY_URI."?token=".$this->payment_token['token'];
 	}
 
-
-	/**
-	 * Génération du boutton de paiement en fonction de la 
-	 * langue choisie, en cas d'absence de paramètres la
-	 * version anglaise du boutton de paiement sera 
-	 * générer automatiquement
-	 * @param const string Les constantes présentes dans la
-	 * classe MoncashAPI
-	 * @return string L'url du boutton correspondant
-	 */
-	public function btnPay($lang = null) {
-
-		$base_url = Constants::BASE_URL_IMG;
-
-		$img = "";
-
-		if($lang === MoncashAPI::BTN_FR) {
-			$img = MoncashAPI::BTN_FR;
-		} else if($lang === MoncashAPI::BTN_KR) {
-			$img = MoncashAPI::BTN_KR;
-		} else {
-			$img = MoncashAPI::BTN_EN;
-		}
-
-		return $base_url."".$img;
-	} 
+ 
 
 
 	public function __toString() {
