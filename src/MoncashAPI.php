@@ -161,6 +161,33 @@ class MoncashAPI {
 	 	}
 
 	}
+	
+	
+	/**
+	 * Génération du boutton de paiement en fonction de la 
+	 * langue choisie, en cas d'absence de paramètres la
+	 * version anglaise du boutton de paiement sera 
+	 * générer automatiquement
+	 * @param string 'FR' pour le francais, 'EN' pour l'
+	 * anglais et 'KR' pour le créole
+	 * @return string L'url du boutton correspondant
+	 */
+	public function btnPay($lang = null) {
+
+		$base_url = Constants::BASE_URL_IMG;
+
+		$img = "";
+
+		if($lang == "FR" || $lang == "fr") {
+			$img = MoncashAPI::BTN_FR;
+		} else if($lang == "KR" || $lang == "kr") {
+			$img = MoncashAPI::BTN_KR;
+		} else {
+			$img = MoncashAPI::BTN_EN;
+		}
+
+		return $base_url."".$img;
+	}
 
 
 
