@@ -5,7 +5,7 @@ Une librairie PHP permettant d'utiliser les services Moncash dans un projet, bas
 Installation
 -----
 
-Dans le dossier racine de votre projet, créez un nouveau fichier <b>composer.json</b> avec le contenu suivant :
+Dans la racine du dossier de votre projet, créez un nouveau fichier <b>composer.json</b> avec le contenu suivant :
 
 ```php
 {
