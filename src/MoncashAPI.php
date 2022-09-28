@@ -11,11 +11,11 @@ class MoncashAPI {
 
 	private $token;
 
-	const BTN_EN = "MC_button.png";
+	private const BTN_EN = "MC_button.png";
 
-	const BTN_FR = "MC_button_fr.png";
+	private const BTN_FR = "MC_button_fr.png";
 
-	const BTN_KR = "MC_button_kr.png";
+	private const BTN_KR = "MC_button_kr.png";
 
 	
 	public function __construct($client_id, $client_secret, $debug = true) {
@@ -59,7 +59,7 @@ class MoncashAPI {
 
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo $e->getMessage();
+	 		echo new MoncashException("Impossible de s'authentifier");
 	 	}
 
 	}
@@ -69,6 +69,9 @@ class MoncashAPI {
 	public function makePaymentRequest($order_id, $amount) {
 
 		$url = $this->configs['api_endpoint'].Constants::PAYMENT_MAKER;
+		
+		if($amount <= 0)
+			throw new MoncashException("Impossible d'effectuer un paiement avec un montant négatif ou nul");
 
 		$order = array('amount'=>"$amount", 'orderId'=>"$order_id");
 
@@ -85,7 +88,7 @@ class MoncashAPI {
 	 		return new PaymentRequest($this->credentials, $details);
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo $e->getMessage();
+	 		echo new MoncashException("Impossible d'effectuer le paiement");
 	 	}
 
 	}
@@ -109,7 +112,7 @@ class MoncashAPI {
 	 		return new Transfert(json_decode($res->getBody(), true));
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo $e->getMessage();
+	 		echo new MoncashException("Impossible d'effectuer le transfert");
 	 	}
 	}
 
@@ -133,7 +136,7 @@ class MoncashAPI {
 
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo $e->getMessage();
+	 		echo new MoncashException("Impossible de trouver cette commande");
 	 	}
 
 	}
@@ -157,7 +160,7 @@ class MoncashAPI {
 
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo $e->getMessage();
+	 		echo new MoncashException("Impossible de trouver cette commande");
 	 	}
 
 	}
@@ -168,7 +171,7 @@ class MoncashAPI {
 	 * langue choisie, en cas d'absence de paramètres la
 	 * version anglaise du boutton de paiement sera 
 	 * générer automatiquement
-	 * @param string 'FR' pour le francais, 'EN' pour l'
+	 * @param string 'FR' pour le français, 'EN' pour l'
 	 * anglais et 'KR' pour le créole
 	 * @return string L'url du boutton correspondant
 	 */
@@ -179,11 +182,11 @@ class MoncashAPI {
 		$img = "";
 
 		if($lang == "FR" || $lang == "fr") {
-			$img = MoncashAPI::BTN_FR;
+			$img = self::BTN_FR;
 		} else if($lang == "KR" || $lang == "kr") {
-			$img = MoncashAPI::BTN_KR;
+			$img = self::BTN_KR;
 		} else {
-			$img = MoncashAPI::BTN_EN;
+			$img = self::BTN_EN;
 		}
 
 		return $base_url."".$img;
