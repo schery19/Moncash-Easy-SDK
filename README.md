@@ -5,10 +5,21 @@ Une librairie PHP permettant d'utiliser les services Moncash dans un projet, bas
 Installation
 -----
 
-Utilisez [composer](https://getcomposer.org/download/) pour installer MoncashEasy, après avoir modifié son chemin [global](https://askcodez.com/modifier-le-chemin-global-du-composeur-windows.html), exécutez la commande suivante:
+Dans le dossier racine de votre projet, créez un nouveau fichier <b>composer.json</b> avec le contenu suivant :
 
 ```php
-composer require moncasheasy/moncash-easy-sdk
+{
+    "require": {
+        "moncasheasy/moncash-easy-sdk": "^1.0",
+        "guzzle/guzzle": "^3.9"
+    }
+}
+```
+
+Utilisez [composer](https://getcomposer.org/download/) pour installer MoncashEasy et ses dépendances, après avoir modifié son chemin [global](https://askcodez.com/modifier-le-chemin-global-du-composeur-windows.html), exécutez la commande suivante sur votre terminal en vous positionnant dans le dossier de votre projet :
+
+```php
+composer install
 ```
 
 
@@ -30,71 +41,62 @@ require '../vendor/autoload.php';
 
 use MoncashEasy\SDK\MoncashAPI;
 
-$clientId = "777fab7666d7b7132ed6dd686d5f3723";
-$clientSecret = "oHrr4tbnB1PH0uz6VQNUvSD5w1LbDsJavGEHpJkHoQ7yhcrTcsY2Hu8TcI7lEwcE";
+$clientId = "<votre client id>";
+$clientSecret = "<votre client secret>";
 
 /**
  * Instantiation de l'objet MoncashAPI avec comme arguments :
- * $clientId et $clientSecret qui sont à récupérer sur le 
+ * $clientId et $clientSecret sont à récupérer sur le 
  * site moncash après avoir créé votre compte business
- * un troisième argument ($debug) pour spécifier 
- * l'environnement, par défaut (true) il est facultatif 
+ * un troisième argument ($debug) spécifie 
+ * l'environnement, par défaut il est à true 
  * passez le à false en mode production.
 */
-$myAPI = new MoncashAPI($clientId, $clientSecret);
+$api = new MoncashAPI($clientId, $clientSecret);
 
-//L'utilisateur arrive pour la 1ère fois sur la page
-if(!isset($_GET['paid'])) {
+```
 
-	//Effectuer un paiement
+Pour effectuer un paiement vous utilisez l'objet PaymentRequest, qui vous donnera par la suite un moyen d'obtenir le lien qui dirigera l'utilisateur sur le site moncash pour finaliser le processus de paiement :
 
-	$orderId = 93;//Un identification unique pour le paiement
+```php
+//Effectuer un paiement
+
+	$orderId = 93;//Une identification unique pour le paiement
 	$amount = 120;//Le montant du paiement
 
-	$payReq = $myAPI->makePaymentRequest($orderId, $amount);
-
-	/**
-	 * Permet à l'utilisateur de se rendre sur le site de Moncash
-	 * pour finaliser le paiement, en lui proposant un boutton qui
-	 * peut-être afficher en fonction de la langue désirée
-	*/
+	$payReq = $api->makePaymentRequest($orderId, $amount);
 
 	?>
 
-	<p><a href='<?php echo $payReq->getRedirect(); ?>'><img src='<?php echo $payReq->btnPay(); ?>' width="120px" height="50px"></a></p>
-	<?php
+	<p><a href='<?= $payReq->getRedirect(); ?>'><img src='<?= $api->btnPay(); ?>' width="120px" height="50px"></a></p>
 
-} else {//L'utilisateur vient d'être redirigé sur la page
-
-	//Afficher les détails sur le paiement, qui vient d'être 
-	//finalisé, avec l'objet PaymentDetails
-	$payDetails = $myAPI->getDetailsByOrderId(93);
-
-	echo "Date de la transaction : ".Date("d/m/Y", $payDetails->getTimestamp()/1000)."<br/>";
-
-	echo "Reference : ".$payDetails->getPayment()->getReference();
-	echo "<br/>";
-	echo "No Transaction : ".$payDetails->getPayment()->getTransactionId();
-	echo "<br/>";
-	echo "Prix : ".$payDetails->getPayment()->getCost();
-	echo "<br/>";
-	echo "Message : ".$payDetails->getPayment()->getMessage();
-	echo "<br/>";
-	echo "Numéro tél : ".$payDetails->getPayment()->getPayer();
-	echo "<br/>";
-}
 ```
+Utlisez la méthode `btnPay('fr')` ou `btnPay('kr')` sur l'objet MoncashAPI pour afficher le boutton moncash respectivement en français ou en créole, sans argument cette méthode affiche la version anglaise du boutton.
+
+
+Après finalisation du processus de paiement, vous pouvez récupérer les informations à partir de l'objet PaymentDetails
+
+```php
+$payDetails = $api->getDetailsByOrderId(93);
+
+echo "Date de la transaction : ".Date("d/m/Y", $payDetails->getTimestamp()/1000)."<br/>";
+
+echo "Reference : ".$payDetails->getPayment()->getReference()."<br/>";
+echo "No Transaction : ".$payDetails->getPayment()->getTransactionId()."<br/>";
+echo "Prix : ".$payDetails->getPayment()->getCost()."<br/>";
+echo "Message : ".$payDetails->getPayment()->getMessage()."<br/>";
+echo "Numéro tél : ".$payDetails->getPayment()->getPayer()."<br/>";
+
+```
+
+
 <strong>Notes :</strong>
-<ul>
-	<li>Vous utilisez la méthode btnPay() sur l'objet PaymentRequest en lui passant comme argument, des constantes comme, MoncashAPI::BTN_FR ou MoncashAPI::BTN_KR pour afficher le button respectivement en francais ou en créole, la valeur par défaut est MoncashAPI::BTN_EN qui affiche la version anglaise</li>
-	<li>Vous pouvez aussi récupérer les détails du paiement avec la méthode getDetailsByTransactionId sur l'objet MoncashAPI</li>
-	<li>Le paramètre 'paid' est spécifié dans l'url de redirection lors de la création du compte business, par exemple en mode développement on a spécifié : 'localhost:80/monProjet/pay.php?paid=1'</li>
-</ul>
+Vous pouvez aussi récupérer les détails du paiement avec la méthode `getDetailsByTransactionId($transaction_id)` sur l'objet MoncashAPI
 
 
 Extras
 -----
 
-Pour toutes suggestions contacter au schneiderchery7@gmail.com
+Pour toutes suggestions ou problèmes rencontrées, contacter au schneiderchery7@gmail.com
 
 Toutes améliorations et ajouts de fonctionnalités sont les bienvenues.
