@@ -41,7 +41,7 @@ class PaymentRequest {
 
 
 	public function __toString() {
-		return "Payment object: path(".$this->path.") - status(".$this->status.") - mode(".$this->mode.")";
+		return "PaymentRequest object: path(".$this->path.") - status(".$this->status.") - mode(".$this->mode.")";
 	}
 
 
