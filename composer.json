@@ -18,6 +18,6 @@
         "php": ">=7.3"
     },
     "require-dev" : {
-    	"guzzlehttp/guzzle": "3.8.1"
+    	"guzzlehttp/guzzle": "^3.9"
     }
 }
