@@ -33,6 +33,19 @@ class MoncashAPI {
 	public function setCredentials($client_id, $client_secret) {
 		$this->credentials = new Credentials($client_id, $client_secret, $this->configs);
 	}
+	
+	
+	public function getMode() { return $this->configs['mode']; }
+
+	public function setMode(string $env) {
+		if($env === Constants::SANDBOX || $env === strtoupper(Constants::SANDBOX)) {
+			$this->configs = Configuration::getConfigArray(true);
+		} elseif($env === Constants::LIVE || $env === strtoupper(Constants::LIVE)) {
+			$this->configs = Configuration::getConfigArray(false);
+		} else {
+			echo new MoncashException("L'environnement doit être 'sandbox' ou 'live'");
+		}
+	}
 
 
 	/** 
