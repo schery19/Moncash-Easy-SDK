@@ -29,7 +29,7 @@ class Constants {
 
 	const PAYMENT_TRANSACTION_URI = "/v1/RetrieveTransactionPayment";
 
-	const BASE_URL_IMG = "https://sandbox.moncashbutton.digicelgroup.com/Moncash-middleware/resources/assets/images/";
+	const IMG_URI = "/resources/assets/images/";
 }
 
 ?>
