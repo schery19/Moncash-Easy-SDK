@@ -32,6 +32,9 @@ class MoncashAPI {
 
 	public function setCredentials($client_id, $client_secret) {
 		$this->credentials = new Credentials($client_id, $client_secret, $this->configs);
+		$this->token = $this->getAuthInfos()['access_token'];
+		
+		return $this;
 	}
 	
 	
@@ -43,8 +46,12 @@ class MoncashAPI {
 		} elseif($env === Constants::LIVE || $env === strtoupper(Constants::LIVE)) {
 			$this->configs = Configuration::getConfigArray(false);
 		} else {
-			echo new MoncashException("L'environnement doit être 'sandbox' ou 'live'");
+			throw new MoncashException("L'environnement doit être 'sandbox' ou 'live'");
 		}
+		
+		$this->token = $this->getAuthInfos()['access_token'];
+		
+		return $this;
 	}
 
 
@@ -72,7 +79,7 @@ class MoncashAPI {
 
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo new MoncashException("Impossible de s'authentifier");
+	 		throw new MoncashException("Impossible de s'authentifier");
 	 	}
 
 	}
@@ -101,7 +108,7 @@ class MoncashAPI {
 	 		return new PaymentRequest($this->credentials, $details);
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo new MoncashException("Impossible d'effectuer le paiement");
+	 		throw new MoncashException("Impossible d'effectuer le paiement");
 	 	}
 
 	}
@@ -125,7 +132,7 @@ class MoncashAPI {
 	 		return new Transfert(json_decode($res->getBody(), true));
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo new MoncashException("Impossible d'effectuer le transfert");
+	 		throw new MoncashException("Impossible d'effectuer le transfert");
 	 	}
 	}
 
@@ -149,7 +156,7 @@ class MoncashAPI {
 
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo new MoncashException("Impossible de trouver cette commande");
+	 		throw new MoncashException("Impossible de trouver cette commande");
 	 	}
 
 	}
@@ -173,7 +180,7 @@ class MoncashAPI {
 
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		echo new MoncashException("Impossible de trouver cette commande");
+	 		throw new MoncashException("Impossible de trouver cette commande");
 	 	}
 
 	}
@@ -190,7 +197,7 @@ class MoncashAPI {
 	 */
 	public function btnPay($lang = null) {
 
-		$base_url = Constants::BASE_URL_IMG;
+		$base_url = $this->configs['redirect_url'].Constants::IMG_URI;
 
 		$img = "";
 
