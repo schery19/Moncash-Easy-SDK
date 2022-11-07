@@ -156,7 +156,7 @@ class MoncashAPI {
 
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		throw new MoncashException("Impossible de trouver cette commande");
+	 		throw new MoncashException("Impossible de trouver cette transaction");
 	 	}
 
 	}
@@ -180,7 +180,7 @@ class MoncashAPI {
 
 
 	 	} catch(\Guzzle\Http\Exception\ClientErrorResponseException $e) {
-	 		throw new MoncashException("Impossible de trouver cette commande");
+	 		throw new MoncashException("Impossible de trouver cette transaction");
 	 	}
 
 	}
