@@ -10,7 +10,7 @@ Dans la racine du dossier de votre projet, créez un nouveau fichier <b>composer
 ```php
 {
     "require": {
-        "moncasheasy/moncash-easy-sdk": "^1.0",
+        "moncasheasy/moncash-easy-sdk": "^1.1",
         "guzzle/guzzle": "^3.9"
     }
 }
@@ -52,23 +52,24 @@ $clientSecret = "<votre client secret>";
  * l'environnement, par défaut il est à true 
  * passez le à false en mode production.
 */
-$api = new MoncashAPI($clientId, $clientSecret);
+$moncash = new MoncashAPI($clientId, $clientSecret);
 
 ```
 
 Pour effectuer un paiement vous utilisez l'objet PaymentRequest, qui vous donnera par la suite un moyen d'obtenir le lien qui dirigera l'utilisateur sur le site moncash pour finaliser le processus de paiement :
 
 ```php
+<?php
 //Effectuer un paiement
 
-	$orderId = 93;//Une identification unique pour le paiement
-	$amount = 120;//Le montant du paiement
+$orderId = 93;//Une identification unique pour le paiement
+$amount = 120;//Le montant du paiement
 
-	$payReq = $api->makePaymentRequest($orderId, $amount);
+$payReq = $moncash->makePaymentRequest($orderId, $amount);
 
-	?>
+?>
 
-	<p><a href='<?= $payReq->getRedirect(); ?>'><img src='<?= $api->btnPay(); ?>' width="120px" height="50px"></a></p>
+<p><a href='<?= $payReq->getRedirect(); ?>'><img src='<?= $moncash->btnPay(); ?>' width="120px" height="50px"></a></p>
 
 ```
 Utlisez la méthode `btnPay('fr')` ou `btnPay('kr')` sur l'objet MoncashAPI pour afficher le boutton moncash respectivement en français ou en créole, sans argument cette méthode affiche la version anglaise du boutton.
@@ -77,7 +78,7 @@ Utlisez la méthode `btnPay('fr')` ou `btnPay('kr')` sur l'objet MoncashAPI pour
 Après finalisation du processus de paiement, vous pouvez récupérer les informations à partir de l'objet PaymentDetails
 
 ```php
-$payDetails = $api->getDetailsByOrderId(93);
+$payDetails = $moncash->getDetailsByOrderId(93);
 
 echo "Date de la transaction : ".Date("d/m/Y", $payDetails->getTimestamp()/1000)."<br/>";
 
@@ -92,6 +93,46 @@ echo "Numéro tél : ".$payDetails->getPayment()->getPayer()."<br/>";
 
 <strong>Notes :</strong>
 Vous pouvez aussi récupérer les détails du paiement avec la méthode `getDetailsByTransactionId($transaction_id)` sur l'objet MoncashAPI
+
+
+
+Certaines opérations sont succeptibles de déclencher des exceptions, surtout en cas d'erreur au niveau des données fournies, avec MoncashEasy il est possible de capturer ces exceptions :
+
+```php
+try {
+
+	$moncash = new MoncashAPI($id, $secret);
+
+	//Les opérations qui s'en suivent
+
+} catch(MoncashEasy\SDK\MoncashException $e) {
+	echo "Erreur : ".$e->getMessage();
+}
+
+```
+
+
+Si vous avez besoin de changer de compte, pas besoin de réinstantier l'objet `$moncash`, vous n'avez qu'à utiliser la méthode `setCredentials($id, $secret)` pour assigner à l'objet les nouvels identifiants correspondant au nouveau compte
+
+```php
+try {
+
+	$moncash = new MoncashAPI($id, $secret);
+
+	//Les opérations qui s'en suivent
+
+	$newId = "<nouveau client id>";
+	$newSecret = "<nouveau client secret>";
+
+	$moncash->setCredentials($newId, $newSecret);
+
+	var_dump($moncash);
+
+} catch(MoncashEasy\SDK\MoncashException $e) {
+	echo "Erreur : ".$e->getMessage();
+}
+
+```
 
 
 Extras
