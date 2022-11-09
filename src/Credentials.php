@@ -7,7 +7,6 @@ class Credentials {
 	private $client_id;
 	private $client_secret;
 	private $configs;
-	private $access_token;
 
 
 	public function __construct($client_id, $client_secret, array $configs) {
