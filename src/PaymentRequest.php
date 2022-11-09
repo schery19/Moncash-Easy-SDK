@@ -10,7 +10,6 @@ class PaymentRequest {
 	private $timestamp;
 	private $status;
 	private $mode;
-	private $redirect;
 
 
 	public function __construct(Credentials $credentials, array $details) {
