@@ -165,7 +165,7 @@ class MoncashAPI {
 
 		$url = $this->credentials->getConfigs()['api_endpoint'].Constants::PAYMENT_TRANSACTION_URI;
 
-		$transaction = array("transactionId"=>$order_id);
+		$transaction = array("transactionId"=>$transaction_id);
 
 		$httpClient = new \Guzzle\Http\Client();
 
