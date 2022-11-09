@@ -49,17 +49,16 @@ class MoncashAPI {
 			throw new MoncashException("L'environnement doit être 'sandbox' ou 'live'");
 		}
 		
-		$this->token = $this->getAuthInfos()['access_token'];
+		//Mode mise à jour pour toutes les classes dépendantes de Credentials
+		$this->setCredentials($this->getCredentials()->getClient_id(), $this->getCredentials()->getClient_secret());
 		
 		return $this;
 	}
 
 
 	/** 
-	 * Obtenir le token d'accès nécessaire aux éventuelles 
-	 * transactions
-	 * @return array La réponse de l'API, contenant le token
-	 * d'accès
+	 * Obtenir le token d'accès nécessaire aux éventuelles transactions
+	 * @return array La réponse de l'API, contenant le token d'accès
 	*/
 	private function getAuthInfos() {
 
@@ -187,12 +186,10 @@ class MoncashAPI {
 	
 	
 	/**
-	 * Génération du boutton de paiement en fonction de la 
-	 * langue choisie, en cas d'absence de paramètres la
-	 * version anglaise du boutton de paiement sera 
-	 * générer automatiquement
-	 * @param string 'FR' pour le français, 'EN' pour l'
-	 * anglais et 'KR' pour le créole
+	 * Génération du boutton de paiement en fonction de la langue choisie, 
+	 * en cas d'absence de paramètres la version anglaise du boutton de 
+	 * paiement sera générer automatiquement
+	 * @param string Code des trois langues disponibles : 'FR', 'EN' et 'KR'
 	 * @return string L'url du boutton correspondant
 	 */
 	public function btnPay($lang = null) {
