@@ -35,7 +35,7 @@ Utilisations
 -----
 
 Dans un fichier dans le repertoire source (src/) de votre projet :
-Instantiation de l'objet MoncashAPI avec comme arguments : `$clientId` et `$clientSecret` qui sont à récupérer sur le site moncash après avoir créé votre compte business, un troisième argument `$debug` spécifie l'environnement, par défaut il est à `true`, passez le à `false` en mode production.
+Instantiez l'objet MoncashAPI avec comme arguments : `$clientId` et `$clientSecret` qui sont à récupérer sur le site moncash après avoir créé votre compte business, un troisième argument `$debug` spécifie l'environnement, par défaut il est à `true`, passez le à `false` en mode production.
 
 ```php
 require '../vendor/autoload.php';
