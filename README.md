@@ -10,8 +10,7 @@ Dans la racine du dossier de votre projet, créez un nouveau fichier <b>composer
 ```php
 {
     "require": {
-        "moncasheasy/moncash-easy-sdk": "^1.1",
-        "guzzle/guzzle": "^3.9"
+        "moncasheasy/moncash-easy-sdk": "^1.3"
     }
 }
 ```
