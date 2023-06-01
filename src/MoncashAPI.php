@@ -70,8 +70,6 @@ class MoncashAPI {
 
 		try {
 
-	 		//$req = $httpClient->post($url, array('Accept' =>"application/json"), array('scope'=>"read,write", 'grant_type'=>"client_credentials"));
-
 			 $req = $httpClient->post($url, array(
 				"form_params"=>array('scope'=>"read,write", 'grant_type'=>"client_credentials"),
 				"headers"=>array('Accept' =>"application/json")
@@ -83,7 +81,7 @@ class MoncashAPI {
 
 
 	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
-	 		throw new MoncashException("Impossible de s'authentifier");
+	 		throw new MoncashException($e);
 	 	}
 
 	}
@@ -117,7 +115,7 @@ class MoncashAPI {
 	 		return new PaymentRequest($this->credentials, $details);
 
 	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
-	 		throw new MoncashException("Impossible d'effectuer le paiement");
+	 		throw new MoncashException($e);
 	 	}
 
 	}
@@ -147,7 +145,7 @@ class MoncashAPI {
 	 		return new Transfert(json_decode($res, true));
 
 	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
-	 		throw new MoncashException("Impossible d'effectuer le transfert");
+	 		throw new MoncashException($e);
 	 	}
 	}
 
@@ -176,7 +174,7 @@ class MoncashAPI {
 
 
 	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
-	 		throw new MoncashException("Impossible de trouver cette transaction");
+	 		throw new MoncashException($e);
 	 	}
 
 	}
@@ -206,7 +204,7 @@ class MoncashAPI {
 
 
 	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
-	 		throw new MoncashException("Impossible de trouver cette transaction");
+	 		throw new MoncashException($e);
 	 	}
 
 	}
