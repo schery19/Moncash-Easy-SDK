@@ -10,16 +10,24 @@ Dans la racine du dossier de votre projet, créez un nouveau fichier <b>composer
 ```php
 {
     "require": {
-        "moncasheasy/moncash-easy-sdk": "^1.3.1"
+        "moncasheasy/moncash-easy-sdk": "^1.5"
     }
 }
 ```
 
 Utilisez [composer](https://getcomposer.org/download/) pour installer MoncashEasy et ses dépendances, après avoir modifié son chemin [global](https://askcodez.com/modifier-le-chemin-global-du-composeur-windows.html), exécutez la commande suivante sur votre terminal en vous positionnant dans le dossier de votre projet :
 
-```php
+```bash
 composer install
 ```
+
+Vous pouvez aussi tapez directement la commande suivante :
+
+```bash
+composer require moncasheasy/moncash-easy-sdk
+```
+
+Si vous ignorez quelle version installer, dans ce cas la version la plus récente sera installée
 
 
 Prérequis
