@@ -17,29 +17,76 @@ class MoncashAPI {
 
 	private const BTN_KR = "MC_button_kr.png";
 
-	
+
+	/**
+	 * Instance de MoncashAPI à partir de laquelle on pourra effectuer les diverses opérations
+	 * 
+	 * @param string $client_id Votre client id
+	 * @param string $client_secret Votre client secret
+	 * @param bool $debug L'environnement d'exécution (sandbox : true | live : false), valeur par défaut : true
+	 * 
+	 * @throws MoncashException
+	 */
 	public function __construct($client_id, $client_secret, $debug = true) {
 
 		$this->configs = Configuration::getConfigArray($debug);
 
 		$this->credentials = new Credentials($client_id, $client_secret, $this->configs);
 
-		$this->token = $this->getAuthInfos()['access_token'];
+		try {
+			$this->token = $this->getAuthInfos()['access_token'];
+		}catch(\Exception $e) {
+			throw new MoncashException($e);
+		}
 	}
 
 
+	/**
+	 * Les identifications du compte Moncash business et les configurations
+	 * 
+	 * @return Credentials
+	 */
 	public function getCredentials() { return $this->credentials; }
 
+	/**
+	 * Modifier les informations du compte Moncash business, et obtenir éventuellement un nouveau token
+	 * 
+	 * @param string $client_id Votre nouveau client id
+	 * @param string $client_secret Votre nouveau client secret
+	 * 
+	 * @return MoncashAPI
+	 * 
+	 * @throws MoncashException
+	 */
 	public function setCredentials($client_id, $client_secret) {
 		$this->credentials = new Credentials($client_id, $client_secret, $this->configs);
-		$this->token = $this->getAuthInfos()['access_token'];
+
+		try {
+			$this->token = $this->getAuthInfos()['access_token'];
+		}catch(\Exception $e) {
+			throw new MoncashException($e);
+		}
 		
 		return $this;
 	}
 	
 	
+	/**
+	 * L'environnement d'exécution (sandbox : true | live : false)'
+	 * 
+	 * @return string (sandbox | live)
+	 */
 	public function getMode() { return $this->configs['mode']; }
 
+	/**
+	 * Changer l'environnement d'exécution
+	 * 
+	 * @param string $env Votre nouvel environnement (live | sandbox)
+	 * 
+	 * @return MoncashAPI
+	 * 
+	 * @throws MoncashException
+	 */
 	public function setMode(string $env) {
 		if($env === Constants::SANDBOX || $env === strtoupper(Constants::SANDBOX)) {
 			$this->configs = Configuration::getConfigArray(true);
@@ -57,7 +104,8 @@ class MoncashAPI {
 
 
 	/** 
-	 * Obtenir le token d'accès nécessaire aux éventuelles transactions
+	 * Obtenir les informations d'authentification
+	 * Principalement le token d'accès nécessaire aux éventuelles transactions
 	 * @return array La réponse de l'API, contenant le token d'accès
 	*/
 	private function getAuthInfos() {
@@ -66,7 +114,7 @@ class MoncashAPI {
 
 		$url = $url_split[0]."//".$this->getCredentials()->getClient_id().":".$this->getCredentials()->getClient_secret()."@".$url_split[1]."".Constants::OAUTH_TOKEN_URI;
 
-		$httpClient = new \GuzzleHttp\Client(['verify'=>false]);
+		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
 
 		try {
 
@@ -87,6 +135,17 @@ class MoncashAPI {
 	}
 
 
+	/**
+	 * Effectuer une requête de paiement
+	 * Avec laquelle vous allez obtenir le lien de redirection pour confirmer le paiement
+	 * 
+	 * @param mixed $order_id Une identification unique, par exemple l'id d'un panier
+	 * @param float $amount	Le montant attendu
+	 * 
+	 * @return PaymentRequest Utilisez la méthode <strong>getRedirect()</strong> sur la valeur retournée pour obtenir le lien de redirection
+	 * 
+	 * @throws MoncashException
+	 */
 	public function makePaymentRequest($order_id, $amount) {
 
 		$url = $this->configs['api_endpoint'].Constants::PAYMENT_MAKER;
@@ -96,19 +155,19 @@ class MoncashAPI {
 
 		$order = array('amount'=>"$amount", 'orderId'=>"$order_id");
 
-		$httpClient = new \GuzzleHttp\Client(['verify'=>false]);
+		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
 
 		try {
 
-			 $req = $httpClient->post($url, array(
-				"headers"=>array(
-					'Accept' =>"application/json", 
-					'authorization'=>"Bearer $this->token",
-					'Content-type'=>"application/json"),
-				"body"=>json_encode($order)
-			 ));
+			$req = $httpClient->post($url, array(
+			"headers"=>array(
+				'Accept' =>"application/json", 
+				'authorization'=>"Bearer $this->token",
+				'Content-type'=>"application/json"),
+			"body"=>json_encode($order)
+			));
 
-			 $res = $req->getBody()->getContents();
+			$res = $req->getBody()->getContents();
 
 	 		$details = json_decode($res, true);
 
@@ -121,14 +180,24 @@ class MoncashAPI {
 	}
 
 
-
+	/**
+	 * Effectuer une requête de transfert
+	 * 
+	 * @param mixed $receiver Le numéro bénéficiaire du transfert
+	 * @param float $amount Le montant du transfert
+	 * @param string $desc Une description sur le transfert
+	 * 
+	 * @return Transfert
+	 * 
+	 * @throws MoncashException
+	 */
 	public function makeTransfert($receiver, $amount, $desc) {
 
 		$url = $this->configs['api_endpoint'].Constants::TRANSFERT;
 
 		$transfert = array("amount"=>$amount, "receiver"=>$receiver, "desc"=>$desc);
 
-		$httpClient = new \GuzzleHttp\Client(['verify'=>false]);
+		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
 
 		try {
 
@@ -150,13 +219,22 @@ class MoncashAPI {
 	}
 
 
+	/**
+	 * Obtenir les détails du paiement à partir de son identification unique
+	 * 
+	 * @param mixed $order_id L'identification unqiue
+	 * 
+	 * @return PaymentDetails
+	 * 
+	 * @throws MoncashException
+	 */
 	public function getDetailsByOrderId($order_id) {
 
 		$url = $this->credentials->getConfigs()['api_endpoint'].Constants::PAYMENT_ORDER_URI;
 
 		$order = array("orderId"=>$order_id);
 
-		$httpClient = new \GuzzleHttp\Client(['verify'=>false]);
+		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
 
 		try {
 
@@ -180,13 +258,22 @@ class MoncashAPI {
 	}
 
 
+	/**
+	 * Obtenir les détails du paiement à partir du numéro de transaction fournit par l'api moncash
+	 * 
+	 * @param mixed $transaction_id L'identification unqiue
+	 * 
+	 * @return PaymentDetails
+	 * 
+	 * @throws MoncashException
+	 */
 	public function getDetailsByTransactionId($transaction_id) {
 
 		$url = $this->credentials->getConfigs()['api_endpoint'].Constants::PAYMENT_TRANSACTION_URI;
 
 		$transaction = array("transactionId"=>$transaction_id);
 
-		$httpClient = new \GuzzleHttp\Client(['verify'=>false]);
+		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
 
 		try {
 
@@ -211,10 +298,11 @@ class MoncashAPI {
 	
 	
 	/**
-	 * Génération du boutton de paiement en fonction de la langue choisie, 
-	 * en cas d'absence de paramètres la version anglaise du boutton de 
-	 * paiement sera générer automatiquement
-	 * @param string Code des trois langues disponibles : 'FR', 'EN' et 'KR'
+	 * Génération du boutton de paiement en fonction de la langue choisie
+	 * En cas d'absence de paramètres la version anglaise du boutton de paiement sera générée automatiquement
+	 * 
+	 * @param string Code des trois langues disponibles : ('FR' | 'EN' | 'KR')
+	 * 
 	 * @return string L'url du boutton correspondant
 	 */
 	public function btnPay($lang = null) {
