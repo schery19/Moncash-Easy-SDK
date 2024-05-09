@@ -29,7 +29,7 @@ class Transfert {
 
 
 	public function __toString() {
-		return "Transfert object: transaction_id(".$this->transfertDetails['transaction_id'].") - amount(".$this->transfertDetails['amount'].") - receiver(".$this->receiver['receiver'].") - message(".$this->transfertDetails['message'].") - description(".$this->payment['description'].")";
+		return "Transfert object: transaction_id(".$this->transfertDetails['transaction_id'].") - amount(".$this->transfertDetails['amount'].") - receiver(".$this->transfertDetails['receiver'].") - message(".$this->transfertDetails['message'].") - description(".$this->transfertDetails['description'].")";
 	}
 	
 }
