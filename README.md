@@ -35,7 +35,7 @@ Prérequis
 
 Pour utiliser MoncashEasy il faut d'abord avoir un compte marchand sur le site de [MonCash](https://sandbox.moncashbutton.digicelgroup.com/Moncash-business/New), ce compte vous servira pour tester votre intégration.
 
-Après avoir entrer les informations nécessaires, vous serez diriger vers une nouvelle page sur laquelle vous obtiendrez votre clientID et clientSecret qui seront très utiles pour l'utilisation de MoncashEasy.
+Après avoir entré les informations nécessaires, vous serez dirigé vers une nouvelle page sur laquelle vous obtiendrez votre clientID et clientSecret qui seront très utiles pour l'utilisation de MoncashEasy.
 
 
 Utilisations
