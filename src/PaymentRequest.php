@@ -33,7 +33,7 @@ class PaymentRequest {
 
 	public function getRedirect() {
 
-		return $this->redirect = $this->credentials->getConfigs()['redirect_url']."".Constants::GATEWAY_URI."?token=".$this->payment_token['token'];
+		return $this->credentials->getConfigs()['redirect_url']."".Constants::GATEWAY_URI."?token=".$this->payment_token['token'];
 	}
 
  
