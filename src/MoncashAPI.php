@@ -48,6 +48,7 @@ class MoncashAPI {
 	 */
 	public function getCredentials() { return $this->credentials; }
 
+
 	/**
 	 * Modifier les informations du compte Moncash business, et obtenir éventuellement un nouveau token
 	 * 
@@ -78,6 +79,7 @@ class MoncashAPI {
 	 */
 	public function getMode() { return $this->configs['mode']; }
 
+
 	/**
 	 * Changer l'environnement d'exécution
 	 * 
@@ -106,6 +108,7 @@ class MoncashAPI {
 	/** 
 	 * Obtenir les informations d'authentification
 	 * Principalement le token d'accès nécessaire aux éventuelles transactions
+	 * 
 	 * @return array La réponse de l'API, contenant le token d'accès
 	*/
 	private function getAuthInfos() {
@@ -114,21 +117,19 @@ class MoncashAPI {
 
 		$url = $url_split[0]."//".$this->getCredentials()->getClient_id().":".$this->getCredentials()->getClient_secret()."@".$url_split[1]."".Constants::OAUTH_TOKEN_URI;
 
-		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
-
 		try {
 
-			 $req = $httpClient->post($url, array(
-				"form_params"=>array('scope'=>"read,write", 'grant_type'=>"client_credentials"),
-				"headers"=>array('Accept' =>"application/json")
-			 ));
+			$headers = array('Accept' => 'application/json');
 
-			 $res = $req->getBody()->getContents();
+			$data = array('scope'=>"read,write", 'grant_type'=>"client_credentials");
+			
 
-	 		return json_decode($res, true);
+			$res = RequestHandler::execute($url, 'POST', $headers, $data, $this->configs['mode']);
+
+	 		return json_decode($res['response'], true);
 
 
-	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
+	 	} catch(MoncashException $e) {
 	 		throw new MoncashException($e);
 	 	}
 
@@ -155,25 +156,20 @@ class MoncashAPI {
 
 		$order = array('amount'=>"$amount", 'orderId'=>"$order_id");
 
-		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
-
 		try {
 
-			$req = $httpClient->post($url, array(
-			"headers"=>array(
+			$headers = array(
 				'Accept' =>"application/json", 
-				'authorization'=>"Bearer $this->token",
-				'Content-type'=>"application/json"),
-			"body"=>json_encode($order)
-			));
+				'Authorization'=>"Bearer $this->token",
+				'Content-Type'=>"application/json");
 
-			$res = $req->getBody()->getContents();
+			$res = RequestHandler::execute($url, 'POST', $headers, $order, $this->configs['mode']);
 
-	 		$details = json_decode($res, true);
+	 		$details = json_decode($res['response'], true);
 
 	 		return new PaymentRequest($this->credentials, $details);
 
-	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
+	 	} catch(MoncashException $e) {
 	 		throw new MoncashException($e);
 	 	}
 
@@ -197,23 +193,18 @@ class MoncashAPI {
 
 		$transfert = array("amount"=>$amount, "receiver"=>$receiver, "desc"=>$desc);
 
-		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
-
 		try {
 
-			 $req = $httpClient->post($url, array(
-				"headers"=>array(
-					'Accept' =>"application/json", 
-					'authorization'=>"Bearer $this->token",
-					'Content-type'=>"application/json"),
-				"body"=>json_encode($transfert)
-			 ));
+			$headers = array(
+				'Accept' =>"application/json", 
+				'authorization'=>"Bearer $this->token",
+				'Content-type'=>"application/json");
+			
+			$res = RequestHandler::execute($url, 'POST', $headers, $transfert, $this->configs['mode']);
 
-	 		$res = $req->getBody()->getContents();
+	 		return new Transfert(json_decode($res['response'], true));
 
-	 		return new Transfert(json_decode($res, true));
-
-	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
+	 	} catch(MoncashException $e) {
 	 		throw new MoncashException($e);
 	 	}
 	}
@@ -234,24 +225,18 @@ class MoncashAPI {
 
 		$order = array("orderId"=>$order_id);
 
-		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
-
 		try {
 
-			 $req = $httpClient->post($url, array(
-				"headers"=>array(
-					'Accept' =>"application/json", 
-					'authorization'=>"Bearer $this->token",
-					'Content-type'=>"application/json"),
-				"body"=>json_encode($order)
-			 ));
-	 		
-			$res = $req->getBody()->getContents();
+			$headers = array(
+				'Accept' =>"application/json", 
+				'Authorization'=>"Bearer $this->token",
+				'Content-Type'=>"application/json");
 
-	 		return new PaymentDetails(json_decode($res, true));
+			$res = RequestHandler::execute($url, 'POST', $headers, $order, $this->configs['mode']);
 
+	 		return new PaymentDetails(json_decode($res['response'], true));
 
-	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
+	 	} catch(MoncashException $e) {
 	 		throw new MoncashException($e);
 	 	}
 
@@ -273,24 +258,19 @@ class MoncashAPI {
 
 		$transaction = array("transactionId"=>$transaction_id);
 
-		$httpClient = new \GuzzleHttp\Client($this->configs['ignoreSSLVerification']);
-
 		try {
 
-	 		$req = $httpClient->post($url, array(
-				"headers"=>array(
-					'Accept' =>"application/json", 
-					'authorization'=>"Bearer $this->token",
-					'Content-type'=>"application/json"),
-				"body"=>json_encode($transaction)
-			 ));
-			
-			$res = $req->getBody()->getContents();
+			$headers = array(
+				'Accept' =>"application/json", 
+				'Authorization'=>"Bearer $this->token",
+				'Content-Type'=>"application/json");
 
-	 		return new PaymentDetails(json_decode($res, true));
+			$res = RequestHandler::execute($url, 'POST', $headers, $transaction, $this->configs['mode']);
+
+	 		return new PaymentDetails(json_decode($res['response'], true));
 
 
-	 	} catch(\GuzzleHttp\Exception\ClientException $e) {
+	 	} catch(MoncashException $e) {
 	 		throw new MoncashException($e);
 	 	}
 
