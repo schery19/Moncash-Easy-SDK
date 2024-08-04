@@ -5,12 +5,14 @@ Une librairie PHP permettant d'utiliser les services Moncash dans un projet, bas
 Installation
 -----
 
-Dans la racine du dossier de votre projet, créez un nouveau fichier <b>composer.json</b> avec le contenu suivant :
+## Via Composer
+
+Dans la racine du dossier de votre projet, créez un nouveau fichier <b>composer.json</b> s'il n'existe pas encore, ajoutez le contenu suivant :
 
 ```php
 {
     "require": {
-        "moncasheasy/moncash-easy-sdk": "^1.6"
+        "moncasheasy/moncash-easy-sdk": "^2.0"
     }
 }
 ```
@@ -27,7 +29,23 @@ Vous pouvez aussi tapez directement la commande suivante :
 composer require moncasheasy/moncash-easy-sdk
 ```
 
-Si vous ignorez quelle version installer, dans ce cas la version la plus récente sera installée
+Si vous ignorez quelle version installer, dans ce cas la version la plus récente sera installée.
+
+Ensuite dans votre code, utilisez l'[autoload](https://getcomposer.org/doc/01-basic-usage.md#autoloading) de Composer : 
+
+```php
+require_once 'vendor/autoload.php';
+```
+
+
+## Installation manuelle
+
+Si vous ne souhaitez pas utiliser Composer, vous pouvez télécharger la [dernière version](https://github.com/schery19/Moncash-Easy-SDK/releases), et ensuite incluez le fichier `init.php` dans votre code :
+
+```php
+require_once '/path/to/Moncash-Easy-SDK/init.php';
+```
+
 
 
 Prérequis
@@ -45,7 +63,6 @@ Dans un fichier dans le repertoire source (src/) de votre projet :
 Instantiez l'objet MoncashAPI avec comme arguments : `$clientId` et `$clientSecret` qui sont à récupérer sur le site moncash après avoir créé votre compte business, un troisième argument `$debug` spécifie l'environnement, par défaut il est à `true`, passez le à `false` en mode production.
 
 ```php
-require '../vendor/autoload.php';
 
 use MoncashEasy\SDK\MoncashAPI;
 
@@ -69,7 +86,11 @@ $payReq = $moncash->makePaymentRequest($orderId, $amount);
 
 ?>
 
-<p><a href='<?= $payReq->getRedirect(); ?>'><img src='<?= $moncash->btnPay(); ?>' width="120px" height="50px"></a></p>
+<p>
+	<a href='<?= $payReq->getRedirect(); ?>'>
+		<img src='<?= $moncash->btnPay(); ?>' width="120px" height="50px">
+	</a>
+</p>
 
 ```
 Utlisez la méthode `btnPay('fr')` ou `btnPay('kr')` sur l'objet MoncashAPI pour afficher le boutton moncash respectivement en français ou en créole, sans argument cette méthode affiche la version anglaise du boutton.
@@ -92,7 +113,7 @@ echo "Numéro tél : ".$payDetails->getPayment()->getPayer()."<br/>";
 
 
 <strong>Notes :</strong>
-Vous pouvez aussi récupérer les détails du paiement avec la méthode `getDetailsByTransactionId($transaction_id)` sur l'objet MoncashAPI
+Vous pouvez aussi récupérer les détails du paiement avec la méthode `getDetailsByTransactionId($transaction_id)` sur l'objet MoncashAPI en utilisant le paramètre <b>transactionId</b> dans l'url de retour fournit par l'api moncash
 
 
 
