@@ -197,8 +197,8 @@ class MoncashAPI {
 
 			$headers = array(
 				'Accept' =>"application/json", 
-				'authorization'=>"Bearer $this->token",
-				'Content-type'=>"application/json");
+				'Authorization'=>"Bearer $this->token",
+				'Content-Type'=>"application/json");
 			
 			$res = RequestHandler::execute($url, 'POST', $headers, $transfert, $this->configs['mode']);
 
