@@ -65,17 +65,12 @@ class RequestHandler {
             if(curl_errno($curl))
                 throw new MoncashException("Erreur cURL : ".curl_error($curl));
 
-            $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
             $response =  [
                 'code'=>$statusCode,
                 'response'=>$response
             ];
 
-            if($statusCode >= 200 && $statusCode <= 299)
-                return $response;
-            else 
-                throw new MoncashException($response);
+            return $response;
             
         } catch(MoncashException $e) {
             throw new MoncashException($e);
