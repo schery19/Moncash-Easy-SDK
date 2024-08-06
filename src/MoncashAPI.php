@@ -126,6 +126,10 @@ class MoncashAPI {
 
 			$res = RequestHandler::execute($url, 'POST', $headers, $data, $this->configs['mode']);
 
+			if($res['code'] >= 400) 
+				throw new MoncashException($res);
+			
+
 	 		return json_decode($res['response'], true);
 
 
@@ -165,6 +169,9 @@ class MoncashAPI {
 
 			$res = RequestHandler::execute($url, 'POST', $headers, $order, $this->configs['mode']);
 
+			if($res['code'] >= 400) 
+				throw new MoncashException($res);
+
 	 		$details = json_decode($res['response'], true);
 
 	 		return new PaymentRequest($this->credentials, $details);
@@ -201,6 +208,9 @@ class MoncashAPI {
 				'Content-Type'=>"application/json");
 			
 			$res = RequestHandler::execute($url, 'POST', $headers, $transfert, $this->configs['mode']);
+
+			if($res['code'] >= 400) 
+				throw new MoncashException($res);
 
 	 		return new Transfert(json_decode($res['response'], true));
 
