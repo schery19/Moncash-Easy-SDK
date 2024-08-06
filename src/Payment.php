@@ -14,11 +14,13 @@ class Payment {
 
 	public function __construct(array $details) {
 
-		$this->reference = $details['reference'];
-		$this->transaction_id = $details['transaction_id'];
-		$this->cost = $details['cost'];
-		$this->message = $details['message'];
-		$this->payer = $details['payer'];
+		if(!empty($details)) {
+			$this->reference = $details['reference'];
+			$this->transaction_id = $details['transaction_id'];
+			$this->cost = $details['cost'];
+			$this->message = $details['message'];
+			$this->payer = $details['payer'];
+		}
 
 	}
 
