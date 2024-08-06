@@ -12,7 +12,7 @@ class PaymentDetails {
 
 	public function __construct(array $details) {
 		$this->path = $details['path'];
-		$this->payment = new Payment($details['payment']);
+		$this->payment = new Payment($details['payment']??[]);
 		$this->timestamp = $details['timestamp'];
 		$this->status = $details['status'];
 
