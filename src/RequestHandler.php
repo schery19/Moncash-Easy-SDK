@@ -64,6 +64,9 @@ class RequestHandler {
 
             if(curl_errno($curl))
                 throw new MoncashException("Erreur cURL : ".curl_error($curl));
+		
+
+	    $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
             $response =  [
                 'code'=>$statusCode,
