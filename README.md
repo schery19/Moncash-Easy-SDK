@@ -12,7 +12,7 @@ Dans la racine du dossier de votre projet, créez un nouveau fichier <b>composer
 ```php
 {
     "require": {
-        "moncasheasy/moncash-easy-sdk": "^2.0"
+        "moncasheasy/moncash-easy-sdk": "^2.0.1"
     }
 }
 ```
